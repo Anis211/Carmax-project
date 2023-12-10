@@ -54,5 +54,17 @@ export const theme = createTheme({
       fontFamily: "Inter, sans-serif",
       fontWeight: 700,
     },
+    WixTextBold: {
+      fontFamily: "Wix Madefor Text, sans-serif",
+      fontWeight: 700,
+    },
+    WixTextMedium: {
+      fontFamily: "Wix Madefor Text, sans-serif",
+      fontWeight: 500,
+    },
+    WixTextRegular: {
+      fontFamily: "Wix Madefor Text, sans-serif",
+      fontWeight: 400,
+    },
   },
 });

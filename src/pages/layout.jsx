@@ -162,10 +162,11 @@ export default function Layout({ children }) {
               height: "130px",
             }}
           />
-          {footerDetails.map((details) => {
+          {footerDetails.map((details, index) => {
             return (
               <>
                 <Box
+                  key={index}
                   className="contentBox"
                   sx={{
                     display: "flex",
@@ -178,15 +179,18 @@ export default function Layout({ children }) {
                   >
                     {details.header}
                   </Typography>
-                  {details.body.map((body) => {
+                  {details.body.map((body, index) => {
                     return (
                       <>
-                        <Typography variant="footerBody">{body}</Typography>
+                        <Typography key={index} variant="footerBody">
+                          {body}
+                        </Typography>
                       </>
                     );
                   })}
                 </Box>
                 <Divider
+                  key={index}
                   variant="fullWidth"
                   orientation="vertical"
                   sx={{
