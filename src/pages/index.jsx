@@ -9,10 +9,14 @@ import {
   Rating,
   TextField,
   Button,
+  CircularProgress,
+  Alert,
+  Snackbar,
 } from "@mui/material";
 import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
+import { sendCotactData } from "@/lib/api";
 
 export default function Home() {
   const ref = useRef(null);
@@ -25,7 +29,58 @@ export default function Home() {
   const isInView1 = useInView(ref1, { once: true });
   const isInView2 = useInView(ref2, { once: true });
   const isInView3 = useInView(ref3, { once: true });
-  const isInView4 = useInView(ref3, { once: true });
+  const isInView4 = useInView(ref4, { once: true });
+
+  const initValues = {
+    name: "",
+    email: "",
+    message: "",
+  };
+  const initState = {
+    values: initValues,
+    isLoading: false,
+    isError: false,
+    error: "",
+  };
+
+  const [state, setState] = useState(initState);
+  const [touched, setTouched] = useState({});
+  const [isSuccess, setIsSuccess] = useState(false);
+  const { values } = state;
+
+  const handleChange = (event) => {
+    setState((prev) => {
+      return {
+        ...prev,
+        values: { ...prev.values, [event.target.name]: event.target.value },
+      };
+    });
+  };
+
+  const handleBlur = (event) => {
+    setTouched((prev) => {
+      return { ...prev, [event.target.name]: true };
+    });
+  };
+
+  const handleClick = async () => {
+    setState((prev) => {
+      return { ...prev, isLoading: true };
+    });
+    try {
+      await sendCotactData(values);
+      setIsSuccess(true);
+    } catch (err) {
+      setState((prev) => {
+        return {
+          ...prev,
+          isError: true,
+          isLoading: false,
+          error: err.message,
+        };
+      });
+    }
+  };
 
   const logoVariants = {
     hidden: { opacity: 0, x: 60 },
@@ -116,7 +171,7 @@ export default function Home() {
       duration: 1,
       ease: "backInOut",
       staggerChildren: 0.2,
-      childrenDelay: 0.3,
+      childrenDelay: 0.4,
     },
   };
 
@@ -180,6 +235,7 @@ export default function Home() {
           width: "100%",
           height: "800px",
           backgroundColor: "#000000",
+          paddingTop: "100px",
         }}
       >
         <Grid container>
@@ -243,13 +299,14 @@ export default function Home() {
       </Box>
       <Box
         className="FAQ"
+        id="about"
         sx={{
           backgroundColor: "#EDF2F4",
           width: "calc(100% - 300px)",
           height: "auto",
           display: "flex",
           flexDirection: "column",
-          padding: "60px 150px 130px 150px",
+          padding: "100px 150px 130px 150px",
         }}
       >
         <Typography
@@ -533,6 +590,7 @@ export default function Home() {
         })}
       </Box>
       <Box
+        id="contact"
         className="contactUs"
         sx={{
           width: "calc(100% - 300px)",
@@ -575,19 +633,34 @@ export default function Home() {
               alignSelf: "center",
             }}
           >
-            {["Имя", "Email"].map((placeHolder, index) => {
-              return (
-                <>
-                  <TextField
-                    key={index}
-                    label={placeHolder}
-                    variant="outlined"
-                    required
-                    sx={{ width: "265px", marginLeft: "15px" }}
-                  />
-                </>
-              );
-            })}
+            <TextField
+              label="Имя"
+              variant="outlined"
+              required
+              sx={{ width: "265px", marginLeft: "15px" }}
+              name="name"
+              type="text"
+              value={values.name}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={touched.name && !values.name ? true : false}
+            />
+            <TextField
+              label="Почта"
+              variant="outlined"
+              required
+              type="email"
+              sx={{ width: "265px", marginLeft: "15px" }}
+              name="email"
+              value={values.email}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={
+                (touched.email && !values.email) || !values.email.includes("@")
+                  ? true
+                  : false
+              }
+            />
           </Box>
           <TextField
             label="Сообщение"
@@ -601,6 +674,11 @@ export default function Home() {
               left: "344px",
               opacity: 0.5,
             }}
+            name="message"
+            value={values.message}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            error={touched.message && !values.message ? true : false}
           />
           <Button
             variant="contained"
@@ -611,10 +689,34 @@ export default function Home() {
               left: "6px",
               marginTop: "10px",
             }}
+            disabled={
+              !values.name || !values.email || !values.message ? true : false
+            }
+            onClick={handleClick}
           >
-            <Typography variant="SchibstedRegular">Отправить</Typography>
+            <Typography variant="SchibstedRegular">
+              {state.isLoading ? (
+                <CircularProgress color="info" />
+              ) : (
+                "Отправить"
+              )}
+            </Typography>
           </Button>
         </Box>
+        <Snackbar
+          open={isSuccess}
+          autoHideDuration={2000}
+          onClose={() => {
+            setIsSuccess(false);
+            setState(initState);
+            setTouched({});
+          }}
+        >
+          <Alert severity="success" variant="filled" sx={{ width: "300px" }}>
+            Email has been successfully sent
+          </Alert>
+        </Snackbar>
+        {state.isError ? <Alert severity="error">{state.error}</Alert> : ""}
       </Box>
     </Box>
   );

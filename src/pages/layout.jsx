@@ -11,7 +11,7 @@ export default function Layout({ children }) {
     },
     {
       text: "О нас",
-      path: "about",
+      path: "#about",
     },
     {
       text: "Каталог",
@@ -19,7 +19,7 @@ export default function Layout({ children }) {
     },
     {
       text: "Контакты",
-      path: "contact",
+      path: "#contact",
     },
   ];
 
@@ -63,6 +63,8 @@ export default function Layout({ children }) {
           alignItems: "center",
           justifyContent: "space-between",
           alignSelf: "flex-start",
+          position: "fixed",
+          zIndex: 2,
         }}
       >
         <Typography
