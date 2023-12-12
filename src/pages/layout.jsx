@@ -7,7 +7,7 @@ export default function Layout({ children }) {
   const headers = [
     {
       text: "Главная",
-      path: "",
+      path: "#hero",
     },
     {
       text: "О нас",
@@ -15,7 +15,7 @@ export default function Layout({ children }) {
     },
     {
       text: "Каталог",
-      path: "catalog",
+      path: "#catalog",
     },
     {
       text: "Контакты",
