@@ -16,12 +16,22 @@ import {
   Link,
 } from "@mui/material";
 import { motion, useInView } from "framer-motion";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { sendCotactData } from "@/lib/api";
 import { Link as NextLink } from "next/link";
 
 export default function Home() {
+  const [data, setData] = useState({});
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch("/api/parts");
+      const json = await response.json();
+      setData(json);
+    };
+    fetchData();
+  }, []);
+
   const ref = useRef(null);
   const ref1 = useRef(null);
   const ref2 = useRef(null);
@@ -167,22 +177,6 @@ export default function Home() {
         "Очень богатый выбор! Стану постоянным покупателем! Также очень приветливые и знающие свое дело продавцы! цены умеренные! вообщем меня все устроило! буду заходить почаще! всем удачи!",
       rating: 5,
     },
-  ];
-
-  const parts = [
-    "Детали для ТО",
-    "Двигатель",
-    "Топливная Система",
-    "Система Охлаждения",
-    "Система Выпуска",
-    "Трансмиссия",
-    "Ходовая Часть",
-    "Рулевое Упрвление",
-    "Тормозная Система",
-    "Электрооборудование",
-    "Отопление/Кондиционирование",
-    "Детали Салона",
-    "Дополнительное Оборудование",
   ];
 
   const commonTypography = {
@@ -508,7 +502,7 @@ export default function Home() {
             {...commonTypography}
           >
             {wordLeftAnimation(
-              "Быстрая Доставка: Ваш заказ - наш приоритет Профессиональные Консультации: Наши эксперты всегда готовы помочь как в выборе запчасти, так и в ее установке а нашем СТО",
+              "Быстрая Доставка: Ваш заказ - наш приоритет Профессиональные Консультации: Наши эксперты всегда готовы помочь как в выборе запчасти, так и в ее установке в нашем СТО",
               "SchibstedRegular",
               "20.5px",
               { marginRight: "15px" }
@@ -569,7 +563,7 @@ export default function Home() {
             childreDelay: 0.4,
           }}
         >
-          {parts.map((part, index) => {
+          {Object.keys(data).map((part, index) => {
             return (
               <>
                 <Paper
@@ -589,6 +583,7 @@ export default function Home() {
                   }}
                 >
                   <Link
+                    key={index}
                     href="#contact"
                     component={NextLink}
                     color="black"
@@ -754,7 +749,7 @@ export default function Home() {
               value={values.number}
               onChange={handleChange}
               onBlur={handleBlur}
-              error={touched.email && !values.email ? true : false}
+              error={touched.number && !values.number ? true : false}
             />
           </Box>
           <TextField
