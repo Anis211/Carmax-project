@@ -1,7 +1,6 @@
 import {
   Box,
   Typography,
-  Grid,
   Card,
   CardHeader,
   CardContent,
@@ -14,23 +13,25 @@ import {
   Snackbar,
   Paper,
   Link,
+  Grid,
+  Fab,
 } from "@mui/material";
 import { motion, useInView } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
+import { useRef, useState, useEffect } from "react";
+import { wordLeftAnimation, letterLeftAnimation } from "@/lib/animations";
 import { sendCotactData } from "@/lib/api";
 import { Link as NextLink } from "next/link";
+import Image from "next/image";
+import useList from "@/lib/list.js";
 
 export default function Home() {
-  const [data, setData] = useState({});
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch("/api/parts");
-      const json = await response.json();
-      setData(json);
-    };
-    fetchData();
+    useList.persist.rehydrate();
   }, []);
+
+  const list = useList((state) => new Array(state.list));
+  const clearList = useList((state) => state.clearList);
+  const deleteItem = useList((state) => state.deleteItem);
 
   const ref = useRef(null);
   const ref1 = useRef(null);
@@ -50,6 +51,7 @@ export default function Home() {
     name: "",
     number: "",
     message: "",
+    car: "",
   };
   const initState = {
     values: initValues,
@@ -58,6 +60,7 @@ export default function Home() {
     error: "",
   };
 
+  const [isCircle, setIsCircle] = useState(true);
   const [state, setState] = useState(initState);
   const [touched, setTouched] = useState({});
   const [isSuccess, setIsSuccess] = useState(false);
@@ -67,9 +70,21 @@ export default function Home() {
     setState((prev) => {
       return {
         ...prev,
-        values: { ...prev.values, [event.target.name]: event.target.value },
+        values: {
+          ...prev.values,
+          message: `${list[0]}`,
+          [event.target.name]: event.target.value,
+        },
       };
     });
+  };
+
+  const handleClick1 = () => {
+    clearList();
+  };
+
+  const handleDelete = (element) => {
+    deleteItem(element.textContent);
   };
 
   const handleBlur = (event) => {
@@ -96,31 +111,6 @@ export default function Home() {
       });
     }
   };
-
-  const logoVariants = {
-    hidden: { opacity: 0, x: 60 },
-    visible: { opacity: 1, x: 0 },
-  };
-
-  const faqVariants = {
-    hidden: { opacity: 0, y: 60 },
-    visible: { opacity: 1, y: 0 },
-  };
-
-  const faqContent = [
-    {
-      header: "Запчасти разного качества",
-      body: "Надежные решения для вашего транспорта",
-    },
-    {
-      header: "Доступные цены",
-      body: "Качество не ударит по вашему кошельку",
-    },
-    {
-      header: "Доставка по всей Астане",
-      body: "Медленный транспорт не нужен когда время тикает",
-    },
-  ];
 
   const comments = [
     {
@@ -179,6 +169,40 @@ export default function Home() {
     },
   ];
 
+  const faqContent = [
+    {
+      header: "Запчасти разного качества",
+      body: "Надежные решения для вашего транспорта",
+    },
+    {
+      header: "Доступные цены",
+      body: "Качество не ударит по вашему кошельку",
+    },
+    {
+      header: "Доставка по всей Астане",
+      body: "Медленный транспорт не нужен когда время тикает",
+    },
+  ];
+
+  const headers = [
+    "Детали для ТО",
+    "Прокладки двигателя",
+    "Система подачи воздуха в двигателе",
+    "Механизм газораспределения",
+    "Кривошатунный механизм двигателя",
+    "Система Смазки в двигателе",
+    "Приготовление смеси в двигателе",
+    "Двигатель",
+    "Топливная система",
+    "Система охлаждения",
+    "Cистема Выпуска",
+  ];
+
+  const faqVariants = {
+    hidden: { opacity: 0, y: 60 },
+    visible: { opacity: 1, y: 0 },
+  };
+
   const commonTypography = {
     layout: true,
     initial: "hidden",
@@ -190,60 +214,166 @@ export default function Home() {
     },
   };
 
-  const imageAnimation = {
-    initial: { x: 80, opacity: 0 },
-    animate: { x: 0, opacity: 1 },
-    transition: {
-      duration: 1.5,
-      type: "spring",
-      delay: 0.2,
-    },
-  };
-
-  const wordLeftAnimation = (text, variant, fontSize, sxOptions) => {
-    return text.split(" ").map((word, index) => {
-      return (
-        <>
-          <Typography
-            sx={{ display: "inline-block", ...sxOptions }}
-            key={index}
-            component={motion.span}
-            variants={{
-              hidden: { opacity: 0, x: 60 },
-              visible: { opacity: [0, 0.5, 1], x: [60, 0, 0] },
-            }}
-            variant={variant}
-            fontSize={fontSize}
-          >
-            {word}
-          </Typography>
-        </>
-      );
-    });
-  };
-
-  const letterLeftAnimation = (text, variant, fontSize) => {
-    return text.split("").map((letter, index) => {
-      return (
-        <>
-          <Typography
-            key={index}
-            sx={{ display: "inline-block" }}
-            component={motion.span}
-            variants={logoVariants}
-            variant={variant}
-            color="white"
-            fontSize={fontSize}
-          >
-            {letter}
-          </Typography>
-        </>
-      );
-    });
-  };
-
   return (
     <Box className="home" sx={{ height: "auto", width: "100% " }}>
+      {!isCircle ? (
+        <>
+          <Box
+            sx={{
+              width: "500px",
+              height: "auto",
+              backgroundColor: "white",
+              opacity: "0.93",
+              display: "flex",
+              flexDirection: "column",
+              borderRadius: "20px",
+              position: "fixed",
+              zIndex: 2,
+              left: "65%",
+              top: "16%",
+            }}
+            component={motion.div}
+            initial={{ x: 70, y: -70, opacity: 0 }}
+            animate={{ x: 0, y: 0, opacity: 1 }}
+            exit={{ x: -70, y: -70, opacity: 0 }}
+            transition={{ duration: 1, type: "spring" }}
+          >
+            <Box
+              id="container"
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                marginTop: "15px",
+                marginBottom: "15px",
+              }}
+              component={motion.div}
+              initial="hidden"
+              animate="visible"
+              transition={{
+                duration: 1.5,
+                ease: "backInOut",
+                times: [0, 0.5, 1],
+                staggerChildren: 0.3,
+              }}
+            >
+              <Image
+                src="/cross.svg"
+                alt="cross"
+                width={18}
+                height={18}
+                onClick={() => setIsCircle(true)}
+                style={{ position: "absolute", left: "461px" }}
+              />
+              <Link
+                component={NextLink}
+                href="/#catalog"
+                underline="none"
+                sx={{ alignSelf: "center", marginBottom: "10px" }}
+              >
+                <Typography variant="WixExtraBold" fontSize="25px">
+                  Карзина
+                </Typography>
+              </Link>
+              {list[0].map((value, index) => {
+                if (value != "") {
+                  return (
+                    <>
+                      <Box
+                        key={index}
+                        sx={{
+                          height: "auto",
+                          width: "100%",
+                          padding: "10px 20px 10px 30px",
+                          display: "flex",
+                          flexDirection: "row",
+                        }}
+                        component={motion.div}
+                        variants={{
+                          hidden: { opacity: 0, y: 60 },
+                          visible: { opacity: [0, 0.5, 1], y: [60, 0, 0] },
+                        }}
+                      >
+                        <Typography
+                          id={`d${index}`}
+                          variant="InterMedium"
+                          fontSize="16px"
+                          sx={{ alignSelf: "center" }}
+                        >
+                          {value}
+                        </Typography>
+                        <Fab
+                          color="error"
+                          size="small"
+                          sx={{ marginLeft: "10px" }}
+                        >
+                          <p
+                            id={`b${index}`}
+                            style={{
+                              zIndex: -1,
+                              opacity: 0,
+                              position: "absolute",
+                            }}
+                            onClick={(event) => handleDelete(event.target)}
+                          >
+                            {value}
+                          </p>
+                          <Image
+                            id={index}
+                            alt="cross"
+                            src="/cross.svg"
+                            width={16}
+                            height={16}
+                            onClick={(event) => {
+                              const elem = document.getElementById(
+                                `b${event.target.id}`
+                              );
+                              handleDelete(elem);
+                            }}
+                          />
+                        </Fab>
+                      </Box>
+                    </>
+                  );
+                }
+              })}
+            </Box>
+            <Button
+              variant="contained"
+              onClick={handleClick1}
+              sx={{
+                borderRadius: "0px 0px 20px 20px",
+                marginTop: "10px",
+              }}
+            >
+              Delete
+            </Button>
+          </Box>
+        </>
+      ) : (
+        <>
+          <Fab
+            sx={{
+              width: "70px",
+              height: "70px",
+              backgroundColor: "white",
+              opacity: "0.93",
+              borderRadius: "90px",
+              position: "fixed",
+              zIndex: 2,
+              left: "94%",
+              top: "15%",
+            }}
+            onClick={() => setIsCircle(false)}
+            component={motion.div}
+            layout
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <Image alt="shopping cart" src="/cart.png" width={22} height={22} />
+          </Fab>
+        </>
+      )}
       <Box
         id="hero"
         sx={{
@@ -297,7 +427,6 @@ export default function Home() {
           </Grid>
           <Grid item xs={6}>
             <Card
-              ref={ref}
               sx={{
                 width: "600px",
                 height: "600px",
@@ -305,7 +434,13 @@ export default function Home() {
                 top: "40px",
               }}
               component={motion.div}
-              {...imageAnimation}
+              initial={{ x: 80, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{
+                duration: 1.5,
+                type: "spring",
+                delay: 0.2,
+              }}
             >
               <Image src="/logo.png" alt="logo" width={600} height={600} />
             </Card>
@@ -525,6 +660,7 @@ export default function Home() {
         </Card>
       </Box>
       <Box
+        id="catalog"
         sx={{
           width: "calc(100% - 300px)",
           height: "auto",
@@ -549,7 +685,6 @@ export default function Home() {
           {letterLeftAnimation("Каталог", "WixExtraBold", "65px")}
         </Typography>
         <Box
-          id="catalog"
           sx={{ width: "100%", height: "auto" }}
           component={motion.div}
           layout
@@ -563,7 +698,7 @@ export default function Home() {
             childreDelay: 0.4,
           }}
         >
-          {Object.keys(data).map((part, index) => {
+          {headers.map((part, index) => {
             return (
               <>
                 <Paper
@@ -583,8 +718,7 @@ export default function Home() {
                   }}
                 >
                   <Link
-                    key={index}
-                    href="#contact"
+                    href={`/parts/${headers.indexOf(part)}`}
                     component={NextLink}
                     color="black"
                     underline="none"
@@ -753,7 +887,19 @@ export default function Home() {
             />
           </Box>
           <TextField
-            label="Сообщение"
+            label="Марка и Модель Автомобиля"
+            variant="outlined"
+            required
+            type="text"
+            sx={{ width: "44.5%", left: "344px", marginTop: "15px" }}
+            name="car"
+            value={values.car}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            error={touched.car && !values.car ? true : false}
+          />
+          <TextField
+            label="Заказ"
             multiline
             minRows={10}
             sx={{
@@ -765,10 +911,10 @@ export default function Home() {
               opacity: 0.5,
             }}
             name="message"
-            value={values.message}
+            value={list[0]}
+            content={list[0]}
             onChange={handleChange}
             onBlur={handleBlur}
-            error={touched.message && !values.message ? true : false}
           />
           <Button
             variant="contained"
@@ -780,7 +926,7 @@ export default function Home() {
               marginTop: "10px",
             }}
             disabled={
-              !values.name || !values.number || !values.message ? true : false
+              !values.name || !values.number || !values.car ? true : false
             }
             onClick={handleClick}
           >

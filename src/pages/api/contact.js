@@ -3,7 +3,7 @@ import { transporter } from "@/lib/nodemailer";
 export default async function handler(req, res) {
   if (req.method == "POST") {
     const data = req.body;
-    if (!data.name || !data.number || !data.message) {
+    if (!data.name || !data.number || !data.car) {
       return res.status(400).json("Missed data");
     }
     try {
@@ -11,7 +11,7 @@ export default async function handler(req, res) {
         from: process.env.EMAIL,
         to: process.env.EMAIL,
         subject: "Новый Клиент!!!",
-        html: `<h1>Новый Клиент!!!</h1><p>Имя: ${data.name}</p><p>Номер WhatsApp: ${data.number}</p><p>Сообщение: ${data.message}</p>`,
+        html: `<h1>Новый Клиент!!!</h1><p>Имя: ${data.name}</p><p>Номер WhatsApp: ${data.number}</p><p>Марка и Модель Автомобиля: ${data.car}</p><p>Список Запчастей: ${data.message}</p>`,
       });
       return res.status(200).json("success");
     } catch (err) {
