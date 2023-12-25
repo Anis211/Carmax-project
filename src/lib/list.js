@@ -6,6 +6,7 @@ const useList = create(
     (set) => ({
       list: [],
       clicked: [],
+      setList: (newList) => set(() => ({ list: newList[0] })),
       addToList: (elem) =>
         set((state) =>
           state.list.includes(elem) == false

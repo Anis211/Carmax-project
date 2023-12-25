@@ -47,8 +47,8 @@ export default function Layout({ children }) {
   ];
 
   const logoVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 },
+    hidden: { opacity: 0, y: 60 },
+    visible: { opacity: [0, 0.5, 1], y: [40, -10, 0] },
   };
 
   return (
@@ -79,21 +79,19 @@ export default function Layout({ children }) {
           layout
           initial="hidden"
           animate="visible"
-          transition={{ duration: 1, type: "spring", staggerChildren: 0.05 }}
+          transition={{ duration: 1, type: "spring", staggerChildren: 0.07 }}
         >
           {"Carmax".split("").map((letter, index) => {
             return (
-              <>
-                <Typography
-                  key={index}
-                  sx={{ display: "inline-block" }}
-                  variant="logo"
-                  component={motion.span}
-                  variants={logoVariants}
-                >
-                  {letter}
-                </Typography>
-              </>
+              <Typography
+                key={index}
+                sx={{ display: "inline-block" }}
+                variant="logo"
+                component={motion.span}
+                variants={logoVariants}
+              >
+                {letter}
+              </Typography>
             );
           })}
         </Typography>
@@ -107,29 +105,27 @@ export default function Layout({ children }) {
           component={motion.div}
           initial="hidden"
           animate="visible"
-          transition={{ duration: 1, type: "spring", staggerChildren: 0.1 }}
+          transition={{ duration: 1, type: "spring", staggerChildren: 0.2 }}
         >
           {headers.map((header, index) => {
             return (
-              <>
-                <Link
-                  key={index}
-                  component={NextLink}
-                  href={`/${header.path}`}
-                  underline="none"
-                  color="white"
-                  sx={{ marginRight: "70px" }}
+              <Link
+                key={index}
+                component={NextLink}
+                href={`/${header.path}`}
+                underline="none"
+                color="white"
+                sx={{ marginRight: "70px" }}
+              >
+                <Typography
+                  variant="headers"
+                  sx={{ display: "inline-block" }}
+                  component={motion.span}
+                  variants={logoVariants}
                 >
-                  <Typography
-                    variant="headers"
-                    sx={{ display: "inline-block" }}
-                    component={motion.span}
-                    variants={logoVariants}
-                  >
-                    {header.text}
-                  </Typography>
-                </Link>
-              </>
+                  {header.text}
+                </Typography>
+              </Link>
             );
           })}
         </Box>
