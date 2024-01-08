@@ -9,13 +9,11 @@ export const theme = createTheme({
     logo: {
       fontFamily: "Montserrat, sans-serif",
       fontWeight: 800,
-      fontSize: 35,
       color: "#FCCA46",
     },
     headers: {
       fontFamily: "Montserrat, sans-serif",
       fontWeight: 800,
-      fontSize: 15,
       color: "#FBFCFD",
     },
     footerHead: {

@@ -6,10 +6,74 @@ import {
   CardContent,
   Avatar,
   Rating,
+  styled,
 } from "@mui/material";
+import { letterLeftAnimation } from "@/lib/animations";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import Image from "next/image";
+
+const CommentsBlock = styled(Box)(({ theme }) => ({
+  [theme.breakpoints.between("xs", "md")]: {
+    height: "auto",
+    width: "100vw",
+    padding: 0,
+    paddingBottom: "50px",
+    marginBottom: "-1px",
+    textAlign: "center",
+  },
+  width: "calc(100% - 240px)",
+  height: "auto",
+  padding: "0px 120px 100px 120px",
+  backgroundColor: "#EF233C",
+  display: "flex",
+  flexDirection: "column",
+}));
+
+const Header = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down("sm")]: {
+    width: "100vw",
+    fontSize: "38px",
+    margin: "30px 0px",
+  },
+  [theme.breakpoints.between("sm", "md")]: {
+    width: "100vw",
+  },
+  fontSize: "65px",
+  alignSelf: "center",
+  marginBottom: "70px",
+}));
+
+const Comment = styled(Card)(({ theme }) => ({
+  [theme.breakpoints.down("sm")]: {
+    margin: "10px auto",
+    width: "280px",
+  },
+  [theme.breakpoints.between("sm", "md")]: {
+    width: "280px",
+  },
+  backgroundColor: "white",
+  opacity: 0.87,
+  width: "16.16vw",
+  height: "auto",
+  marginTop: "20px",
+  marginBottom: "20px",
+  borderRadius: "20px",
+  padding: "30px",
+}));
+
+const Com = styled(Box)(({ theme }) => ({
+  [theme.breakpoints.between("sm", "md")]: {
+    paddingLeft: "60px",
+    gap: "15px",
+  },
+  width: "100vw",
+  display: "flex",
+  flexDirection: "row",
+  flexWrap: "wrap",
+  gap: "15px",
+  marginBottom: "10px",
+}));
 
 export default function Comments() {
   const ref = useRef(null);
@@ -73,18 +137,8 @@ export default function Comments() {
   ];
 
   return (
-    <Box
+    <CommentsBlock
       ref={ref}
-      className="comments"
-      sx={{
-        width: "calc(100% - 300px)",
-        height: "auto",
-        padding: "100px 150px 100px 150px",
-        backgroundColor: "#EF233C",
-        display: "flex",
-        flexDirection: "row",
-        flexWrap: "wrap",
-      }}
       component={motion.div}
       initial="hidden"
       animate={isInView ? "visible" : ""}
@@ -96,56 +150,65 @@ export default function Comments() {
         childrenDelay: 0.4,
       }}
     >
-      {comments.map((element, index) => {
-        return (
-          <Card
-            key={index}
-            sx={{
-              backgroundColor: "white",
-              opacity: 0.87,
-              width: "320px",
-              height: "auto",
-              marginTop: "20px",
-              marginLeft: "20px",
-              borderRadius: "20px",
-              padding: "30px",
-            }}
-            component={motion.div}
-            variants={{
-              hidden: { opacity: 0, y: 60 },
-              visible: { opacity: [0, 0.4, 0.87], y: [60, 0, 0] },
-            }}
-          >
-            <CardHeader
-              sx={{ marginBottom: "4px" }}
-              avatar={
-                <Avatar>
-                  <Image src={`/user${index}.png`} alt={`user${index}`} fill />
-                </Avatar>
-              }
-              title={
-                <Typography varaint="WixExtraBold" fontSize="20px">
-                  {element.nickName}
+      <Header
+        ref={ref}
+        component={motion.span}
+        initial="hidden"
+        animate={isInView ? "visible" : ""}
+        transition={{
+          duration: 1,
+          type: "spring",
+          staggerChildren: 0.1,
+        }}
+      >
+        {letterLeftAnimation("Коментарии", "WixExtraBold", "100%")}
+      </Header>
+      <Com>
+        {comments.map((element, index) => {
+          return (
+            <Comment
+              key={index}
+              component={motion.div}
+              variants={{
+                hidden: { opacity: 0, y: 60 },
+                visible: { opacity: [0, 0.4, 0.87], y: [60, 0, 0] },
+              }}
+            >
+              <CardHeader
+                sx={{ marginBottom: "4px" }}
+                avatar={
+                  <Avatar>
+                    <Image
+                      src={`/user${index}.png`}
+                      alt={`user${index}`}
+                      fill
+                    />
+                  </Avatar>
+                }
+                title={
+                  <Typography varaint="WixExtraBold" fontSize="20px">
+                    {element.nickName}
+                  </Typography>
+                }
+                subheader={
+                  <Rating
+                    name="commentRating"
+                    precision={0.5}
+                    value={element.rating}
+                    size="small"
+                    readOnly
+                  />
+                }
+              />
+              <CardContent>
+                <Typography variant="InterMedium" fontSize="16px">
+                  {element.comment}
                 </Typography>
-              }
-              subheader={
-                <Rating
-                  name="commentRating"
-                  precision={0.5}
-                  value={element.rating}
-                  size="small"
-                  readOnly
-                />
-              }
-            />
-            <CardContent>
-              <Typography variant="InterMedium" fontSize="16px">
-                {element.comment}
-              </Typography>
-            </CardContent>
-          </Card>
-        );
-      })}
-    </Box>
+              </CardContent>
+            </Comment>
+          );
+        })}
+      </Com>
+    </CommentsBlock>
   );
 }

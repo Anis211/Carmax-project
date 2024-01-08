@@ -1,7 +1,69 @@
 import { motion } from "framer-motion";
-import { Box, Typography, Link, Divider } from "@mui/material";
+import { Box, Typography, Link, Divider, styled } from "@mui/material";
 import { Link as NextLink } from "next/link";
-import { theme } from "@/theme";
+
+const Logo = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down("sm")]: {
+    fontSize: "15px",
+  },
+  justifyItems: "flex-start",
+  position: "relative",
+  left: "2.52vw",
+  fontSize: "35px",
+}));
+
+const Header = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down("sm")]: { fontSize: "13px" },
+  fontSize: "20px",
+}));
+
+const Navbar = styled(Box)(({ theme }) => ({
+  [theme.breakpoints.down("sm")]: { height: "70px" },
+  width: "100vw",
+  height: "100px",
+  backgroundColor: theme.palette.primary.main,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  alignSelf: "flex-start",
+  position: "fixed",
+  zIndex: 2,
+}));
+
+const Footer = styled(Box)(({ theme }) => ({
+  [theme.breakpoints.down("sm")]: {},
+  width: "100%",
+  height: "auto",
+  backgroundColor: theme.palette.primary.main,
+  alignSelf: "flex-end",
+  display: "flex",
+}));
+
+const FooterDetails = styled(Box)(({ theme }) => ({
+  [theme.breakpoints.down("sm")]: {
+    width: "100vw",
+    gap: "15px",
+    paddingTop: "60px",
+  },
+  width: "100%",
+  height: "auto",
+  backgroundColor: theme.palette.primary.main,
+  display: "flex",
+  textAlign: "center",
+  paddingTop: "100px",
+}));
+
+const Text = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down("sm")]: { fontSize: "0.9em" },
+}));
+
+const Seperator = styled(Divider)(({ theme }) => ({
+  [theme.breakpoints.down("sm")]: { borderColor: theme.palette.primary.main },
+  borderColor: "lightgrey",
+  height: "130px",
+  position: "relative",
+  bottom: "100px",
+}));
 
 export default function Layout({ children }) {
   const headers = [
@@ -25,24 +87,27 @@ export default function Layout({ children }) {
 
   const footerDetails = [
     {
-      header: "Contact us",
+      header: "Контактные Данные",
       body: [
-        "Address: st.Petrova 23",
-        "Phone number: +7 705 602 1256",
-        "Email: anishejioov@gmail.com",
+        "Наш Адресс: ул.Петрова 23",
+        "Номер Телефона: +7 700 330 09 28",
+        "Почта: artyr_kz@mail.ru",
       ],
+      links: ["", "", ""],
     },
     {
-      header: "Social Media",
-      body: ["Facebook", "Instagram", "WhatsApp"],
-    },
-    {
-      header: "Links",
+      header: "Ссылки",
       body: ["Home", "Catalog", "Contact", "About"],
+      links: ["#hero", "#about", "#catalog", "#contact"],
     },
     {
-      header: "Catalog",
-      body: ["Engine fuel pump", "fuel pump", "oil filter", "accessories"],
+      header: "Социальные сети",
+      body: ["Instagram", "WhatsApp", "2Gis"],
+      links: [
+        "https://www.instagram.com/magazin_avtozap_carmax?utm_source=qr&igsh=MXF1bmNuMmd4NGo5dQ==",
+        "https://web.whatsapp.com/",
+        "https://2gis.kz/astana/firm/70000001018076457",
+      ],
     },
   ];
 
@@ -52,49 +117,26 @@ export default function Layout({ children }) {
   };
 
   return (
-    <Box className="main" sx={{ dispay: "flex", flexDirection: "column" }}>
-      <Box
-        className="navbar"
-        sx={{
-          width: "100%",
-          height: "100px",
-          backgroundColor: theme.palette.primary.main,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          alignSelf: "flex-start",
-          position: "fixed",
-          zIndex: 2,
-        }}
-      >
-        <Typography
+    <Box
+      className="main"
+      sx={{
+        dispay: "flex",
+        flexDirection: "column",
+        width: "100vw",
+      }}
+    >
+      <Navbar>
+        <Logo
           variant="logo"
-          sx={{
-            justifyItems: "flex-start",
-            position: "relative",
-            left: "50px",
-          }}
           aria-hidden
           component={motion.span}
           layout
-          initial="hidden"
-          animate="visible"
-          transition={{ duration: 1, type: "spring", staggerChildren: 0.07 }}
+          initial={{ opacity: 0, y: 60 }}
+          animate={{ opacity: [0, 0.5, 1], y: [40, -10, 0] }}
+          transition={{ duration: 1, type: "spring" }}
         >
-          {"Carmax".split("").map((letter, index) => {
-            return (
-              <Typography
-                key={index}
-                sx={{ display: "inline-block" }}
-                variant="logo"
-                component={motion.span}
-                variants={logoVariants}
-              >
-                {letter}
-              </Typography>
-            );
-          })}
-        </Typography>
+          Carmax
+        </Logo>
         <Box
           className="headers"
           sx={{
@@ -105,7 +147,12 @@ export default function Layout({ children }) {
           component={motion.div}
           initial="hidden"
           animate="visible"
-          transition={{ duration: 1, type: "spring", staggerChildren: 0.2 }}
+          transition={{
+            duration: 1,
+            type: "spring",
+            staggerChildren: 0.2,
+            delayChildren: 0.3,
+          }}
         >
           {headers.map((header, index) => {
             return (
@@ -115,92 +162,69 @@ export default function Layout({ children }) {
                 href={`/${header.path}`}
                 underline="none"
                 color="white"
-                sx={{ marginRight: "70px" }}
+                sx={{ marginRight: "3.53vw" }}
               >
-                <Typography
+                <Header
+                  key={index}
                   variant="headers"
                   sx={{ display: "inline-block" }}
                   component={motion.span}
                   variants={logoVariants}
                 >
                   {header.text}
-                </Typography>
+                </Header>
               </Link>
             );
           })}
         </Box>
-      </Box>
+      </Navbar>
       {children}
-      <Box
-        className="footer"
-        sx={{
-          width: "100%",
-          height: "300px",
-          backgroundColor: theme.palette.primary.main,
-          alignSelf: "flex-end",
-          display: "flex",
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            flexGrow: 1,
-            alignItems: "flex-start",
-            alignSelf: "center",
-            justifyContent: "space-evenly",
-            lineHeight: "22px",
-          }}
-        >
-          <Divider
-            variant="fullWidth"
-            orientation="vertical"
-            sx={{
-              borderColor: "lightgrey",
-              height: "130px",
-            }}
-          />
+      <Footer>
+        <FooterDetails>
           {footerDetails.map((details, index) => {
             return (
-              <>
+              <Box key={index} sx={{ width: "100%" }}>
                 <Box
-                  key={index}
                   className="contentBox"
                   sx={{
                     display: "flex",
                     flexDirection: "column",
+                    textAlign: "center",
                   }}
                 >
-                  <Typography
-                    variant="footerHead"
-                    sx={{ marginBottom: "15px" }}
-                  >
+                  <Text variant="footerHead" sx={{ marginBottom: "15px" }}>
                     {details.header}
-                  </Typography>
+                  </Text>
                   {details.body.map((body, index) => {
                     return (
-                      <>
-                        <Typography key={index} variant="footerBody">
+                      <Link
+                        key={index}
+                        component={NextLink}
+                        href={details.links[index]}
+                        underline="none"
+                        color="white"
+                      >
+                        <Text key={index} variant="footerBody">
                           {body}
-                        </Typography>
-                      </>
+                        </Text>
+                      </Link>
                     );
                   })}
                 </Box>
-                <Divider
-                  key={index}
-                  variant="fullWidth"
-                  orientation="vertical"
-                  sx={{
-                    borderColor: "lightgrey",
-                    height: "130px",
-                  }}
-                />
-              </>
+                {index < footerDetails.length - 1 ? (
+                  <Seperator
+                    key={index}
+                    variant="fullWidth"
+                    orientation="vertical"
+                  />
+                ) : (
+                  ""
+                )}
+              </Box>
             );
           })}
-        </Box>
-      </Box>
+        </FooterDetails>
+      </Footer>
     </Box>
   );
 }

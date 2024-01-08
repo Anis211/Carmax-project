@@ -11,7 +11,7 @@ export default async function handler(req, res) {
         from: process.env.EMAIL,
         to: process.env.EMAIL,
         subject: "Новый Клиент!!!",
-        html: `<h1>Новый Клиент!!!</h1><p>Имя: ${data.name}</p><p>Номер WhatsApp: ${data.number}</p><p>Марка и Модель Автомобиля: ${data.car}</p><p>Список Запчастей: ${data.message}</p>`,
+        html: `<h1>Новый Клиент!!!</h1><p>Имя: ${data.name}</p><p>Номер WhatsApp: ${data.number}</p><p>VIN: ${data.car}</p><p>Список Запчастей: ${data.message}</p>`,
       });
       return res.status(200).json("success");
     } catch (err) {

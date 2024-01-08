@@ -1,9 +1,83 @@
-import { Box, Typography, Button, Link, Fab } from "@mui/material";
+import { Box, Typography, Button, Link, Fab, styled } from "@mui/material";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import useList from "@/lib/list.js";
 import { Link as NextLink } from "next/link";
 import Image from "next/image";
+
+const Shop = styled(Box)(({ theme }) => ({
+  [theme.breakpoints.down("sm")]: {
+    width: "80vw",
+    left: "18%",
+    top: "10%",
+  },
+  [theme.breakpoints.between("sm", "md")]: {
+    width: "50vw",
+    left: "40%",
+    top: "10%",
+  },
+  [theme.breakpoints.between("md", "lg")]: {
+    width: "33vw",
+  },
+  width: "25.25vw",
+  height: "auto",
+  backgroundColor: "white",
+  opacity: "0.93",
+  display: "flex",
+  flexDirection: "column",
+  borderRadius: "20px",
+  position: "fixed",
+  zIndex: 2,
+  left: "65%",
+  top: "16%",
+}));
+
+const Circle = styled(Fab)(({ theme }) => ({
+  [theme.breakpoints.down("sm")]: {
+    width: "50px",
+    height: "50px",
+    left: "85%",
+    top: "9%",
+  },
+  [theme.breakpoints.between("sm", "md")]: {
+    left: "90%",
+    top: "10%",
+  },
+  width: "70px",
+  height: "70px",
+  backgroundColor: "white",
+  opacity: "0.93",
+  borderRadius: "90px",
+  position: "fixed",
+  zIndex: 2,
+  left: "94%",
+  top: "15%",
+}));
+
+const Value = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down("sm")]: {
+    fontSize: "13px",
+  },
+  [theme.breakpoints.between("sm", "md")]: {
+    fontSize: "20px",
+  },
+  alignSelf: "center",
+  fontSize: "16px",
+}));
+
+const Block = styled(Box)(({ theme }) => ({
+  [theme.breakpoints.down("sm")]: { width: "auto" },
+  height: "auto",
+  width: "100%",
+  padding: "10px 20px 10px 30px",
+  display: "flex",
+  flexDirection: "row",
+}));
+
+const Cross = styled(Fab)(({ theme }) => ({
+  [theme.breakpoints.down("sm")]: { marginLeft: "5px" },
+  marginLeft: "10px",
+}));
 
 export default function Cart() {
   useEffect(() => {
@@ -13,6 +87,7 @@ export default function Cart() {
   const list = useList((state) => new Array(state.list));
   const clearList = useList((state) => state.clearList);
   const deleteItem = useList((state) => state.deleteItem);
+  const deleteClicked = useList((state) => state.deleteClicked);
   const clearClicked = useList((state) => state.clearClicked);
 
   const [isCircle, setIsCircle] = useState(true);
@@ -24,24 +99,12 @@ export default function Cart() {
 
   const handleDelete = (element) => {
     deleteItem(element.textContent);
+    deleteClicked(element.textContent);
   };
 
   if (!isCircle) {
     return (
-      <Box
-        sx={{
-          width: "500px",
-          height: "auto",
-          backgroundColor: "white",
-          opacity: "0.93",
-          display: "flex",
-          flexDirection: "column",
-          borderRadius: "20px",
-          position: "fixed",
-          zIndex: 2,
-          left: "65%",
-          top: "16%",
-        }}
+      <Shop
         component={motion.div}
         initial={{ x: 70, y: -70, opacity: 0 }}
         animate={{ x: 0, y: 0, opacity: 1 }}
@@ -67,12 +130,12 @@ export default function Cart() {
           }}
         >
           <Image
-            src="/cross.svg"
+            src="/cross.png "
             alt="cross"
-            width={18}
-            height={18}
+            width={25}
+            height={25}
             onClick={() => setIsCircle(true)}
-            style={{ position: "absolute", left: "461px" }}
+            style={{ position: "absolute", left: "10px" }}
           />
           <Link
             component={NextLink}
@@ -85,43 +148,31 @@ export default function Cart() {
             }}
           >
             <Typography variant="WixExtraBold" fontSize="25px">
-              Карзина
+              Корзина
             </Typography>
             <Typography
               varaint="InterRegular"
               fontSize="14px"
               sx={{ alignSelf: "center" }}
             >
-              (Нажмите на карзине чтобы заказать)
+              (Нажмите на корзину чтобы заказать)
             </Typography>
           </Link>
           {list[0].map((value, index) => {
             if (value != "") {
               return (
-                <Box
+                <Block
                   key={index}
-                  sx={{
-                    height: "auto",
-                    width: "100%",
-                    padding: "10px 20px 10px 30px",
-                    display: "flex",
-                    flexDirection: "row",
-                  }}
                   component={motion.div}
                   variants={{
                     hidden: { opacity: 0, y: 60 },
                     visible: { opacity: [0, 0.5, 1], y: [60, 0, 0] },
                   }}
                 >
-                  <Typography
-                    id={`d${index}`}
-                    variant="InterMedium"
-                    fontSize="16px"
-                    sx={{ alignSelf: "center" }}
-                  >
+                  <Value id={`d${index}`} variant="InterMedium">
                     {value}
-                  </Typography>
-                  <Fab color="error" size="small" sx={{ marginLeft: "10px" }}>
+                  </Value>
+                  <Cross color="error" size="small">
                     <p
                       id={`b${index}`}
                       style={{
@@ -136,9 +187,9 @@ export default function Cart() {
                     <Image
                       id={index}
                       alt="cross"
-                      src="/cross.svg"
-                      width={16}
-                      height={16}
+                      src="/cross.png"
+                      width={22}
+                      height={22}
                       onClick={(event) => {
                         const elem = document.getElementById(
                           `b${event.target.id}`
@@ -146,8 +197,8 @@ export default function Cart() {
                         handleDelete(elem);
                       }}
                     />
-                  </Fab>
-                </Box>
+                  </Cross>
+                </Block>
               );
             }
           })}
@@ -160,24 +211,13 @@ export default function Cart() {
             marginTop: "10px",
           }}
         >
-          Delete
+          Удалить
         </Button>
-      </Box>
+      </Shop>
     );
   }
   return (
-    <Fab
-      sx={{
-        width: "70px",
-        height: "70px",
-        backgroundColor: "white",
-        opacity: "0.93",
-        borderRadius: "90px",
-        position: "fixed",
-        zIndex: 2,
-        left: "94%",
-        top: "15%",
-      }}
+    <Circle
       onClick={() => setIsCircle(false)}
       component={motion.div}
       layout
@@ -186,6 +226,6 @@ export default function Cart() {
       exit={{ opacity: 0 }}
     >
       <Image alt="shopping cart" src="/cart.png" width={22} height={22} />
-    </Fab>
+    </Circle>
   );
 }
